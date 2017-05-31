@@ -26,5 +26,8 @@
     <ClInclude Include="RPNCalc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="parse.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
