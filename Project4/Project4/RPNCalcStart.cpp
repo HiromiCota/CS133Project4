@@ -120,7 +120,12 @@ namespace PB_CALC
 // ----------------------------------------------------------------------------	
 	void CRPNCalc::add()
 	{
-
+		double one;
+		double two;
+		one = m_stack.pop_front;
+		two = m_stack.pop_front;
+		double three = one + two;
+		m_stack.push_front(three);
 	} 
 
 // ----------------------------------------------------------------------------
@@ -138,7 +143,7 @@ namespace PB_CALC
 // ----------------------------------------------------------------------------
 	void CRPNCalc::clearEntry()
 	{
-	
+		m_stack.pop_front();
 	} 
 
 // ----------------------------------------------------------------------------
@@ -156,7 +161,12 @@ namespace PB_CALC
 // ----------------------------------------------------------------------------
    void CRPNCalc::divide()
    {
-
+	   double one;
+	   double two;
+	   one = m_stack.pop_front;
+	   two = m_stack.pop_front;
+	   double three = one / two;
+	   m_stack.push_front(three);
    } 
 
 // ----------------------------------------------------------------------------
@@ -166,7 +176,22 @@ namespace PB_CALC
 // ----------------------------------------------------------------------------
    void CRPNCalc::exp()
    {
-
+	   double one;
+	   double two;
+	   one = m_stack.pop_front;
+	   two = m_stack.pop_front;
+	   if (two == 0)
+	   {
+		   one = 1;
+	   }
+	   else 
+	   {
+		   for (int i = 0; i < two; i++)
+		   {
+			   one *= one;
+		   }
+	   }
+	   m_stack.push_front(one);
    }  
 
 // ----------------------------------------------------------------------------
@@ -174,7 +199,7 @@ namespace PB_CALC
 // ----------------------------------------------------------------------------
 	void CRPNCalc::getReg(int reg)
 	{
-	
+		m_stack.push_front(reg);
 	}  
 
 // ----------------------------------------------------------------------------
@@ -191,7 +216,12 @@ namespace PB_CALC
 // ----------------------------------------------------------------------------
    void CRPNCalc::mod()
    {
-	
+	   int one;
+	   int two;
+	   one = m_stack.pop_front;
+	   two = m_stack.pop_front;
+	   int three = one % two;
+	   m_stack.push_front(three);
    } 
 
 // ----------------------------------------------------------------------------
@@ -200,7 +230,12 @@ namespace PB_CALC
 // ----------------------------------------------------------------------------
    void CRPNCalc::multiply()
    {
-	
+	   double one;
+	   double two;
+	   one = m_stack.pop_front;
+	   two = m_stack.pop_front;
+	   double three = one * two;
+	   m_stack.push_front(three);
    }  
 
 // ----------------------------------------------------------------------------
@@ -208,7 +243,9 @@ namespace PB_CALC
 // ----------------------------------------------------------------------------
 	void CRPNCalc::neg()
 	{
-	   
+		double one = m_stack.pop_front;
+		one *= -1;
+		m_stack.push_front(one);
 	}  
 
 // ----------------------------------------------------------------------------
@@ -275,7 +312,12 @@ namespace PB_CALC
 // ----------------------------------------------------------------------------
    void CRPNCalc::subtract()
    {
-
+	   double one;
+	   double two;
+	   one = m_stack.pop_front;
+	   two = m_stack.pop_front;
+	   double three = one - two;
+	   m_stack.push_front(three);
    } 
 
 // ----------------------------------------------------------------------------
