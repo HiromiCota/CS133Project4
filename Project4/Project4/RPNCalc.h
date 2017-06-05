@@ -112,7 +112,6 @@ namespace PB_CALC
 	private:
 	// private methods
 		void add();
-		void binary_prep(double& d1, double& d2);
 		void clearEntry();
 		void clearAll();
 		void divide();
@@ -130,8 +129,7 @@ namespace PB_CALC
 		void saveToFile();
 		void setReg(int reg);
 		void subtract();
-		void unary_prep(double& d);
-
+		
 	// private properties
 		double m_registers[NUMREGS];
 		string m_buffer;

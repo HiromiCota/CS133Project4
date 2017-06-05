@@ -123,22 +123,17 @@ namespace PB_CALC
 // ----------------------------------------------------------------------------	
 	void CRPNCalc::add()
 	{
-		double one;
-		double two;
-		one = m_stack.pop_front;
-		two = m_stack.pop_front;
-		double three = one + two;
-		m_stack.push_front(three);
-	} 
-
-// ----------------------------------------------------------------------------
-//	sets the args to the popped values from the stack, if possible
-//	  set error state otherwise
-// ----------------------------------------------------------------------------
-
-	void CRPNCalc::binary_prep(double& d1, double& d2)
-	{
-	
+		if (m_stack.size >= 2)
+		{
+			double one = m_stack.pop_front;
+			double two = m_stack.pop_front;
+			double three = one + two;
+			m_stack.push_front(three);
+		}
+		else 
+		{
+			cout << "There are not enough items to perform an operation";
+		}
 	} 
 
 // ----------------------------------------------------------------------------
@@ -164,12 +159,17 @@ namespace PB_CALC
 // ----------------------------------------------------------------------------
    void CRPNCalc::divide()
    {
-	   double one;
-	   double two;
-	   one = m_stack.pop_front;
-	   two = m_stack.pop_front;
-	   double three = one / two;
-	   m_stack.push_front(three);
+	   if (m_stack.size >= 2)
+	   {
+		   double one = m_stack.pop_front;
+		   double two = m_stack.pop_front;
+		   double three = one / two;
+		   m_stack.push_front(three);
+	   }
+	   else
+	   {
+		   cout << "There are not enough items to perform an operation";
+	   }
    } 
 
 // ----------------------------------------------------------------------------
@@ -202,7 +202,7 @@ namespace PB_CALC
 // ----------------------------------------------------------------------------
 	void CRPNCalc::getReg(int reg)
 	{
-		m_stack.push_front(reg);
+		m_stack.push_front(m_registers[reg]);
 	}  
 
 // ----------------------------------------------------------------------------
@@ -219,12 +219,17 @@ namespace PB_CALC
 // ----------------------------------------------------------------------------
    void CRPNCalc::mod()
    {
-	   int one;
-	   int two;
-	   one = m_stack.pop_front;
-	   two = m_stack.pop_front;
-	   int three = one % two;
-	   m_stack.push_front(three);
+	   if (m_stack.size >= 2)
+	   {
+		   int one = m_stack.pop_front;
+		   int two = m_stack.pop_front;
+		   int three = one % two;
+		   m_stack.push_front(three);
+	   }
+	   else
+	   {
+		   cout << "There are not enough items to perform an operation";
+	   }
    } 
 
 // ----------------------------------------------------------------------------
@@ -233,12 +238,17 @@ namespace PB_CALC
 // ----------------------------------------------------------------------------
    void CRPNCalc::multiply()
    {
-	   double one;
-	   double two;
-	   one = m_stack.pop_front;
-	   two = m_stack.pop_front;
-	   double three = one * two;
-	   m_stack.push_front(three);
+	   if (m_stack.size >= 2)
+	   {
+		   double one = m_stack.pop_front;
+		   double two = m_stack.pop_front;
+		   double three = one * two;
+		   m_stack.push_front(three);
+	   }
+	   else
+	   {
+		   cout << "There are not enough items to perform an operation";
+	   }
    }  
 
 // ----------------------------------------------------------------------------
@@ -249,15 +259,6 @@ namespace PB_CALC
 		double one = m_stack.pop_front;
 		one *= -1;
 		m_stack.push_front(one);
-	}  
-
-// ----------------------------------------------------------------------------
-//	sets the arg to the popped value from the stack, if possible
-//	  sets error state otherwise
-// ----------------------------------------------------------------------------
-	void CRPNCalc::unary_prep(double& d)
-	{
-	
 	}  
 
 // ----------------------------------------------------------------------------
@@ -312,7 +313,7 @@ namespace PB_CALC
 // ----------------------------------------------------------------------------
 	void CRPNCalc::setReg(int reg)
 	{
-			
+		m_registers[reg] = m_stack.pop_front;
 	} 
 
 // ----------------------------------------------------------------------------
@@ -321,12 +322,17 @@ namespace PB_CALC
 // ----------------------------------------------------------------------------
    void CRPNCalc::subtract()
    {
-	   double one;
-	   double two;
-	   one = m_stack.pop_front;
-	   two = m_stack.pop_front;
-	   double three = one - two;
-	   m_stack.push_front(three);
+	   if (m_stack.size >= 2)
+	   {
+		   double one = m_stack.pop_front;
+		   double two = m_stack.pop_front;
+		   double three = one - two;
+		   m_stack.push_front(three);
+	   }
+	   else
+	   {
+		   cout << "There are not enough items to perform an operation";
+	   }
    } 
 
 // ----------------------------------------------------------------------------
