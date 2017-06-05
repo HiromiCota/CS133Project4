@@ -18,6 +18,7 @@
 #include <new>
 #include <sstream>
 #include <stack>
+#include <regex>
 //----------------------------------------------------------------------------
 //
 //    Title:		RPNCalc Class
@@ -108,6 +109,7 @@ namespace PB_CALC
 		void run();                                        
 		void print(ostream& ostr);  // changes m_error on error, so not const
 		void input(istream& istr);
+		bool isDouble(string rawInput);
 
 	private:
 	// private methods
