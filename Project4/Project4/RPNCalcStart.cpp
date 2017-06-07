@@ -210,7 +210,34 @@ namespace PB_CALC
 // ----------------------------------------------------------------------------
 	void CRPNCalc::loadProgram()
 	{
-	
+		///potential fixes/changes
+		///SHOULD WE BE DELETING THE CONTENTS OF THE m_program LIST FIRST?
+
+		string filename;			//string storing the user-created filename
+		string line_contents;			//string containing the contents from file (by line)
+		ifstream if_handler;			//input filestream
+		list<string>::iterator list_it;		//iterator used to push program contents into m_program
+		bool filename_error = false;		//used for errors with opening a file with filename input
+
+		while (!if_handler.is_open())
+		{
+			if (filename_error == true)	//checks if the loop had executed once previously
+				cout << "Could not load program from \"" << filename << "\". Please Try again." << endl;
+			cout << "Enter filename (\".txt\" will be added): ";
+			cin >> filename;			///SHOULD THIS BE USING getline() INSTEAD? A safeRead() FUNC?
+			cin.clear();
+			cin.ignore(FILENAME_MAX, '\n');
+			filename += ".txt";
+			if_handler.open(filename);
+			filename_error = true;	//sets a flag for future loops to tell the user that the file could not be opened
+		}
+		filename_error = false; //resets error flag upon completion of while() loop, file is open
+
+		while (getline(if_handler, line_contents))
+			m_program.push_back(line_contents);
+
+
+		if_handler.close();
 	}  
 
 // ----------------------------------------------------------------------------
@@ -266,7 +293,7 @@ namespace PB_CALC
 // ----------------------------------------------------------------------------
 	void CRPNCalc::recordProgram()
 	{
-
+		m_program.clear(); //clears the current program list before recording
 	} 
 
 // ----------------------------------------------------------------------------
@@ -304,7 +331,31 @@ namespace PB_CALC
 // ----------------------------------------------------------------------------
 	void CRPNCalc::saveToFile()
 	{
-			
+		///potential fixes/changes
+		string filename;			//string storing the user-created filename
+		ofstream of_handler;			//output filestream
+		list<string>::iterator list_it;		//iterator used to print program contents
+		bool filename_error = false;		//used for errors with opening a file with filename input
+
+		while (!of_handler.is_open())
+		{
+			if (filename_error == true)	//checks if the loop had executed once previously
+				cout << "Could not save to a file using \"" << filename << "\". Please Try again." << endl;
+			cout << "Enter filename (\".txt\" will be added): ";
+			cin >> filename;		///SHOULD THIS BE USING getline() INSTEAD?
+			cin.clear();
+			cin.ignore(FILENAME_MAX, '\n');
+			filename += ".txt";
+			of_handler.open(filename);
+			filename_error = true;	//sets a flag for future loops to tell the user that the file could not be opened
+		}
+		filename_error = false; //resets error flag upon completion of while() loop, file is open
+
+		for (list_it = m_program.begin(); list_it != m_program.end(); list_it++)
+			of_handler << *list_it << endl;
+
+
+		of_handler.close();	
 	}  
 
 // ----------------------------------------------------------------------------
