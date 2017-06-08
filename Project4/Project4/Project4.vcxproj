@@ -23,7 +23,6 @@
     <ClCompile Include="RPNCalcStart.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="parse.h" />
     <ClInclude Include="RPNCalc.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
