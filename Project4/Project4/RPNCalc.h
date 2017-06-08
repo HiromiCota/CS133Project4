@@ -110,7 +110,12 @@ namespace PB_CALC
 		void print(ostream& ostr);  // changes m_error on error, so not const
 		void input(istream& istr);
 		bool isDouble(string rawInput);
-		bool isOperation(string rawInput);
+		bool isPow(string rawInput);
+		bool isClear(string rawInput);
+		bool isLetterOperator(string rawInput);
+		bool isRegisterGet(string rawInput);
+		bool isRegisterSet(string rawInput);
+		bool isBinaryOperator(string rawInput);
 
 	private:
 	// private methods
