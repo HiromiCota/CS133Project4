@@ -123,17 +123,17 @@ namespace PB_CALC
 // ----------------------------------------------------------------------------	
 	void CRPNCalc::add()
 	{
-
-	} 
-
-// ----------------------------------------------------------------------------
-//	sets the args to the popped values from the stack, if possible
-//	  set error state otherwise
-// ----------------------------------------------------------------------------
-
-	void CRPNCalc::binary_prep(double& d1, double& d2)
-	{
-	
+		if (m_stack.size >= 2)
+		{
+			double one = m_stack.pop_front;
+			double two = m_stack.pop_front;
+			double three = one + two;
+			m_stack.push_front(three);
+		}
+		else 
+		{
+			cout << "There are not enough items to perform an operation";
+		}
 	} 
 
 // ----------------------------------------------------------------------------
@@ -141,7 +141,7 @@ namespace PB_CALC
 // ----------------------------------------------------------------------------
 	void CRPNCalc::clearEntry()
 	{
-	
+		m_stack.pop_front();
 	} 
 
 // ----------------------------------------------------------------------------
@@ -159,7 +159,17 @@ namespace PB_CALC
 // ----------------------------------------------------------------------------
    void CRPNCalc::divide()
    {
-
+	   if (m_stack.size >= 2)
+	   {
+		   double one = m_stack.pop_front;
+		   double two = m_stack.pop_front;
+		   double three = one / two;
+		   m_stack.push_front(three);
+	   }
+	   else
+	   {
+		   cout << "There are not enough items to perform an operation";
+	   }
    } 
 
 // ----------------------------------------------------------------------------
@@ -169,7 +179,22 @@ namespace PB_CALC
 // ----------------------------------------------------------------------------
    void CRPNCalc::exp()
    {
-
+	   double one;
+	   double two;
+	   one = m_stack.pop_front;
+	   two = m_stack.pop_front;
+	   if (two == 0)
+	   {
+		   one = 1;
+	   }
+	   else 
+	   {
+		   for (int i = 0; i < two; i++)
+		   {
+			   one *= one;
+		   }
+	   }
+	   m_stack.push_front(one);
    }  
 
 // ----------------------------------------------------------------------------
@@ -177,7 +202,7 @@ namespace PB_CALC
 // ----------------------------------------------------------------------------
 	void CRPNCalc::getReg(int reg)
 	{
-	
+		m_stack.push_front(m_registers[reg]);
 	}  
 
 // ----------------------------------------------------------------------------
@@ -185,7 +210,34 @@ namespace PB_CALC
 // ----------------------------------------------------------------------------
 	void CRPNCalc::loadProgram()
 	{
-	
+		///potential fixes/changes
+		///SHOULD WE BE DELETING THE CONTENTS OF THE m_program LIST FIRST?
+
+		string filename;			//string storing the user-created filename
+		string line_contents;			//string containing the contents from file (by line)
+		ifstream if_handler;			//input filestream
+		list<string>::iterator list_it;		//iterator used to push program contents into m_program
+		bool filename_error = false;		//used for errors with opening a file with filename input
+
+		while (!if_handler.is_open())
+		{
+			if (filename_error == true)	//checks if the loop had executed once previously
+				cout << "Could not load program from \"" << filename << "\". Please Try again." << endl;
+			cout << "Enter filename (\".txt\" will be added): ";
+			cin >> filename;			///SHOULD THIS BE USING getline() INSTEAD? A safeRead() FUNC?
+			cin.clear();
+			cin.ignore(FILENAME_MAX, '\n');
+			filename += ".txt";
+			if_handler.open(filename);
+			filename_error = true;	//sets a flag for future loops to tell the user that the file could not be opened
+		}
+		filename_error = false; //resets error flag upon completion of while() loop, file is open
+
+		while (getline(if_handler, line_contents))
+			m_program.push_back(line_contents);
+
+
+		if_handler.close();
 	}  
 
 // ----------------------------------------------------------------------------
@@ -194,7 +246,17 @@ namespace PB_CALC
 // ----------------------------------------------------------------------------
    void CRPNCalc::mod()
    {
-	
+	   if (m_stack.size >= 2)
+	   {
+		   int one = m_stack.pop_front;
+		   int two = m_stack.pop_front;
+		   int three = one % two;
+		   m_stack.push_front(three);
+	   }
+	   else
+	   {
+		   cout << "There are not enough items to perform an operation";
+	   }
    } 
 
 // ----------------------------------------------------------------------------
@@ -203,7 +265,17 @@ namespace PB_CALC
 // ----------------------------------------------------------------------------
    void CRPNCalc::multiply()
    {
-	
+	   if (m_stack.size >= 2)
+	   {
+		   double one = m_stack.pop_front;
+		   double two = m_stack.pop_front;
+		   double three = one * two;
+		   m_stack.push_front(three);
+	   }
+	   else
+	   {
+		   cout << "There are not enough items to perform an operation";
+	   }
    }  
 
 // ----------------------------------------------------------------------------
@@ -211,16 +283,9 @@ namespace PB_CALC
 // ----------------------------------------------------------------------------
 	void CRPNCalc::neg()
 	{
-	   
-	}  
-
-// ----------------------------------------------------------------------------
-//	sets the arg to the popped value from the stack, if possible
-//	  sets error state otherwise
-// ----------------------------------------------------------------------------
-	void CRPNCalc::unary_prep(double& d)
-	{
-	
+		double one = m_stack.pop_front;
+		one *= -1;
+		m_stack.push_front(one);
 	}  
 
 // ----------------------------------------------------------------------------
@@ -228,7 +293,7 @@ namespace PB_CALC
 // ----------------------------------------------------------------------------
 	void CRPNCalc::recordProgram()
 	{
-
+		m_program.clear(); //clears the current program list before recording
 	} 
 
 // ----------------------------------------------------------------------------
@@ -236,7 +301,10 @@ namespace PB_CALC
 // ----------------------------------------------------------------------------
 	void CRPNCalc::rotateDown()
 	{
-	
+		if (!m_stack.empty())
+		{
+			m_stack.push_front(m_stack.pop_back);
+		}
 	} 
 
 // ----------------------------------------------------------------------------
@@ -244,7 +312,10 @@ namespace PB_CALC
 // ----------------------------------------------------------------------------
 	void CRPNCalc::rotateUp()
 	{
-	
+		if (!m_stack.empty())
+		{
+			m_stack.push_back(m_stack.pop_front);
+		}
 	} 
 
 // ----------------------------------------------------------------------------
@@ -260,7 +331,31 @@ namespace PB_CALC
 // ----------------------------------------------------------------------------
 	void CRPNCalc::saveToFile()
 	{
-			
+		///potential fixes/changes
+		string filename;			//string storing the user-created filename
+		ofstream of_handler;			//output filestream
+		list<string>::iterator list_it;		//iterator used to print program contents
+		bool filename_error = false;		//used for errors with opening a file with filename input
+
+		while (!of_handler.is_open())
+		{
+			if (filename_error == true)	//checks if the loop had executed once previously
+				cout << "Could not save to a file using \"" << filename << "\". Please Try again." << endl;
+			cout << "Enter filename (\".txt\" will be added): ";
+			cin >> filename;		///SHOULD THIS BE USING getline() INSTEAD?
+			cin.clear();
+			cin.ignore(FILENAME_MAX, '\n');
+			filename += ".txt";
+			of_handler.open(filename);
+			filename_error = true;	//sets a flag for future loops to tell the user that the file could not be opened
+		}
+		filename_error = false; //resets error flag upon completion of while() loop, file is open
+
+		for (list_it = m_program.begin(); list_it != m_program.end(); list_it++)
+			of_handler << *list_it << endl;
+
+
+		of_handler.close();	
 	}  
 
 // ----------------------------------------------------------------------------
@@ -269,7 +364,7 @@ namespace PB_CALC
 // ----------------------------------------------------------------------------
 	void CRPNCalc::setReg(int reg)
 	{
-			
+		m_registers[reg] = m_stack.pop_front;
 	} 
 
 // ----------------------------------------------------------------------------
@@ -278,7 +373,17 @@ namespace PB_CALC
 // ----------------------------------------------------------------------------
    void CRPNCalc::subtract()
    {
-
+	   if (m_stack.size >= 2)
+	   {
+		   double one = m_stack.pop_front;
+		   double two = m_stack.pop_front;
+		   double three = one - two;
+		   m_stack.push_front(three);
+	   }
+	   else
+	   {
+		   cout << "There are not enough items to perform an operation";
+	   }
    } 
 
 // ----------------------------------------------------------------------------

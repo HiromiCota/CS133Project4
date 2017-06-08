@@ -18,6 +18,7 @@
 #include <new>
 #include <sstream>
 #include <stack>
+#include <regex>
 //----------------------------------------------------------------------------
 //
 //    Title:		RPNCalc Class
@@ -108,11 +109,11 @@ namespace PB_CALC
 		void run();                                        
 		void print(ostream& ostr);  // changes m_error on error, so not const
 		void input(istream& istr);
+		bool isDouble(string rawInput);
 
 	private:
 	// private methods
 		void add();
-		void binary_prep(double& d1, double& d2);
 		void clearEntry();
 		void clearAll();
 		void divide();
@@ -130,8 +131,7 @@ namespace PB_CALC
 		void saveToFile();
 		void setReg(int reg);
 		void subtract();
-		void unary_prep(double& d);
-
+		
 	// private properties
 		double m_registers[NUMREGS];
 		string m_buffer;

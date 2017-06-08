@@ -1,3 +1,4 @@
+
 #ifndef PARSE_H
 #define PARSE_H
 
@@ -13,8 +14,43 @@ namespace PB_CALC
 	{
 		//Takes m_instrStream istream and calls appropriate function with correct arguments
 		double leftTerm, rightTerm;
+		char operation;
+		string rawInput="";
+		m_instrStream >> rawInput;		//Grab first element - Should be a number
+		if (isDouble(rawInput))			//Validates with regex. 
+			leftTerm = stod(rawInput);	//This will throw if the user enters over 300 digits
+		else
+		{
+			//The first string in the stream is not a number. Set error and throw.
+			m_error = true;
+			throw invalid_argument("Program stream must start with a number.");
+		}
+		rawInput = "";
+		m_instrStream >> rawInput;
+		if (isDouble(rawInput))			//Validates with regex. 
+			rightTerm = stod(rawInput);	//This will throw if the user enters over 300 digits
+		else
+		{
+			//Might be a user error. Might be a unary operation.
+		}
+		//If there's a binary operation, the operator should be next in the stream.
+			 
 		
 		
+	}
+	bool CRPNCalc::isDouble(string rawInput)
+	{
+		// This matches only strings with:
+		// A single leading + or - (optional)
+		// Any number of digits.
+		// A single decimal point (optional)
+		// Any number of digits.
+		// And NOTHING else.
+		regex validation("^([-+]?)([0-9]*)([.]?)([0-9]*)$");
+		if (regex_match(rawInput, validation))
+			return true;
+		else
+			return false;
 	}
 }
 #endif // !PARSE_H
