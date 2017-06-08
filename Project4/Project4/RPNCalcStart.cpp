@@ -117,7 +117,6 @@ namespace PB_CALC
 	{
 		//Takes m_instrStream istream and calls appropriate function with correct arguments
 		double leftTerm, rightTerm;
-		char operation;
 		string rawInput = "";
 		transform(rawInput.begin(), rawInput.end(), rawInput.begin(),
 			[](unsigned char c) { return ::toupper(c); });			//Instruction stream to upper
@@ -158,10 +157,10 @@ namespace PB_CALC
 				neg();
 			else if (rawInput == "P")
 				recordProgram();
-			else //if (rawInput == "R")
+			else if (rawInput == "R")
 				runProgram();
-			/*else if (rawInput == "X")
-			exit();*/
+			else //if (rawInput == "X")
+				m_on = false;
 		}
 		else if (isRegisterGet(rawInput))	//G0-G9
 		{
@@ -310,14 +309,6 @@ namespace PB_CALC
 		else
 			return false;
 	}
-	// ----------------------------------------------------------------------------
-	//	Strips first character from string
-	// ----------------------------------------------------------------------------
-	string stripChar(string rawInput)
-	{
-		rawInput = rawInput.substr(1, rawInput.size() - 2);	//Strip first char
-	}
-
 
 // ----------------------------------------------------------------------------
 //	if possible, pops top 2 elements from the stack, adds them

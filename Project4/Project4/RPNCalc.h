@@ -116,6 +116,7 @@ namespace PB_CALC
 		bool isRegisterGet(string rawInput);
 		bool isRegisterSet(string rawInput);
 		bool isBinaryOperator(string rawInput);
+		string stripChar(string rawInput) { return (rawInput.substr(1, rawInput.size() - 2)); }
 
 	private:
 	// private methods
