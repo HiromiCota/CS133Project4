@@ -31,6 +31,9 @@ namespace PB_CALC
 			rightTerm = stod(rawInput);	//This will throw if the user enters over 300 digits
 		else
 		{
+			transform(rawInput.begin(), rawInput.end(), rawInput.begin(),
+				[](unsigned char c) { return std::toupper(c); });
+			
 			//Might be a user error. Might be a unary operation.
 		}
 		//If there's a binary operation, the operator should be next in the stream.
@@ -51,6 +54,15 @@ namespace PB_CALC
 			return true;
 		else
 			return false;
+	}
+	bool CRPNCalc::isOperation(string rawInput)
+	{
+		regex pow("^(/^)([0-9]*)$");	//Validates ^ and an int
+		regex clear("^(C)[(E)?)$");		//Validates C and CE
+		regex singleLetters("^([D,F,H,L,M,P,R,U,X]?)$");
+		regex regGet("^(G)([0-9])$");	//Validates G0-G9
+		regex regSet("^(S)([0-9])$");	//Validates S0-S9
+		regex 
 	}
 }
 #endif // !PARSE_H
