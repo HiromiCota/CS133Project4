@@ -247,7 +247,7 @@ namespace PB_CALC
 	// ----------------------------------------------------------------------------
 	bool CRPNCalc::isPow(string rawInput)
 	{
-		regex pow("^(\^)([\-]?)([0-9]*)$");
+		regex pow("^^([-]?)([0-9]*)$");
 		if (regex_match(rawInput, pow))
 			return true;
 		else
@@ -270,7 +270,7 @@ namespace PB_CALC
 	// ----------------------------------------------------------------------------
 	bool CRPNCalc::isLetterOperator(string rawInput)
 	{
-		regex singleLetters("^([D,F,H,L,M,P,R,U,X])$");	//Validates single letter operations
+		regex singleLetters("^([DFHLMPRUX])$");	//Validates single letter operations
 		if (regex_match(rawInput, singleLetters))
 			return true;
 		else
@@ -303,7 +303,7 @@ namespace PB_CALC
 	// ----------------------------------------------------------------------------
 	bool CRPNCalc::isBinaryOperator(string rawInput)
 	{
-		regex binaryOp("^([\+,\-,\*,\/,\%])$");
+		regex binaryOp("^([-+*/%])$");
 		if (regex_match(rawInput, binaryOp))
 			return true;
 		else
@@ -316,10 +316,10 @@ namespace PB_CALC
 // ----------------------------------------------------------------------------	
 	void CRPNCalc::add()
 	{
-		if (m_stack.size >= 2)
+		if (m_stack.size() >= 2)
 		{
-			double one = m_stack.pop_front;
-			double two = m_stack.pop_front;
+			double one = m_stack.pop_front();	//These need to be overridden or changed to functions that pop AND return a value
+			double two = m_stack.pop_front();
 			double three = one + two;
 			m_stack.push_front(three);
 		}
@@ -352,10 +352,10 @@ namespace PB_CALC
 // ----------------------------------------------------------------------------
    void CRPNCalc::divide()
    {
-	   if (m_stack.size >= 2)
+	   if (m_stack.size() >= 2)
 	   {
-		   double one = m_stack.pop_front;
-		   double two = m_stack.pop_front;
+		   double one = m_stack.pop_front();
+		   double two = m_stack.pop_front();
 		   double three = one / two;
 		   m_stack.push_front(three);
 	   }
@@ -374,8 +374,8 @@ namespace PB_CALC
    {
 	   double one;
 	   double two;
-	   one = m_stack.pop_front;
-	   two = m_stack.pop_front;
+	   one = m_stack.pop_front();
+	   two = m_stack.pop_front();
 	   if (two == 0)
 	   {
 		   one = 1;
@@ -439,10 +439,10 @@ namespace PB_CALC
 // ----------------------------------------------------------------------------
    void CRPNCalc::mod()
    {
-	   if (m_stack.size >= 2)
+	   if (m_stack.size() >= 2)
 	   {
-		   int one = m_stack.pop_front;
-		   int two = m_stack.pop_front;
+		   int one = m_stack.pop_front();
+		   int two = m_stack.pop_front();
 		   int three = one % two;
 		   m_stack.push_front(three);
 	   }
@@ -458,10 +458,10 @@ namespace PB_CALC
 // ----------------------------------------------------------------------------
    void CRPNCalc::multiply()
    {
-	   if (m_stack.size >= 2)
+	   if (m_stack.size() >= 2)
 	   {
-		   double one = m_stack.pop_front;
-		   double two = m_stack.pop_front;
+		   double one = m_stack.pop_front();
+		   double two = m_stack.pop_front();
 		   double three = one * two;
 		   m_stack.push_front(three);
 	   }
@@ -476,7 +476,7 @@ namespace PB_CALC
 // ----------------------------------------------------------------------------
 	void CRPNCalc::neg()
 	{
-		double one = m_stack.pop_front;
+		double one = m_stack.pop_front();
 		one *= -1;
 		m_stack.push_front(one);
 	}  
@@ -496,7 +496,7 @@ namespace PB_CALC
 	{
 		if (!m_stack.empty())
 		{
-			m_stack.push_front(m_stack.pop_back);
+			m_stack.push_front(m_stack.pop_back());
 		}
 	} 
 
@@ -507,7 +507,7 @@ namespace PB_CALC
 	{
 		if (!m_stack.empty())
 		{
-			m_stack.push_back(m_stack.pop_front);
+			m_stack.push_back(m_stack.pop_front());
 		}
 	} 
 
@@ -557,7 +557,7 @@ namespace PB_CALC
 // ----------------------------------------------------------------------------
 	void CRPNCalc::setReg(int reg)
 	{
-		m_registers[reg] = m_stack.pop_front;
+		m_registers[reg] = m_stack.pop_front();
 	} 
 
 // ----------------------------------------------------------------------------
@@ -568,8 +568,8 @@ namespace PB_CALC
    {
 	   if (m_stack.size >= 2)
 	   {
-		   double one = m_stack.pop_front;
-		   double two = m_stack.pop_front;
+		   double one = m_stack.pop_front();
+		   double two = m_stack.pop_front();
 		   double three = one - two;
 		   m_stack.push_front(three);
 	   }
