@@ -505,7 +505,10 @@ namespace PB_CALC
 	{
 		if (!m_stack.empty())
 		{
-			m_stack.push_front(m_stack.pop_back());
+			int index = m_stack.size() -1;
+			double one = m_stack[index];
+			m_stack.pop_back();
+			m_stack.push_front(one);
 		}
 	}
 
@@ -516,7 +519,9 @@ namespace PB_CALC
 	{
 		if (!m_stack.empty())
 		{
-			m_stack.push_back(m_stack.pop_front());
+			double one = m_stack[0];
+			m_stack.pop_front();
+			m_stack.push_back(one);
 		}
 	}
 
