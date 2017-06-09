@@ -122,13 +122,13 @@ namespace PB_CALC
 			[](unsigned char c) { return ::toupper(c); });			//Instruction stream to upper
 		m_instrStream >> rawInput;		//Grab first element 
 
-										// Valid first elements:
-										// Double
-										// Clear (C or CE)
-										// Register Get (G0-G9)
-										// Rotations (D)own or (U)p
-										// (H)elp, (L)oad, save (F)ile, (M)ultiply top of stack by -1, record (P)rogram
-										// (R)un program, e(X)it program
+		// Valid first elements:
+		// Double
+		// Clear (C or CE)
+		// Register Get (G0-G9)
+		// Rotations (D)own or (U)p
+		// (H)elp, (L)oad, save (F)ile, (M)ultiply top of stack by -1, record (P)rogram
+		// (R)un program, e(X)it program
 
 		if (isDouble(rawInput))			//Validates with regex. 
 		{
@@ -573,7 +573,7 @@ namespace PB_CALC
 	// ----------------------------------------------------------------------------
 	void CRPNCalc::subtract()
 	{
-		if (m_stack.size >= 2)
+		if (m_stack.size() >= 2)
 		{
 			double one = m_stack[0];
 			m_stack.pop_front();
