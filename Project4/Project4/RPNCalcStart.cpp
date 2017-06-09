@@ -319,8 +319,8 @@ namespace PB_CALC
 		if (m_stack.size() >= 2)
 		{
 			double one = m_stack[0]; //These need to be overridden or changed to functions that pop AND return a value
-			m_stack.pop_front();
 			double two = m_stack[1];
+			m_stack.pop_front();
 			m_stack.pop_front();
 			double three = one + two;
 			m_stack.push_front(three);
@@ -357,8 +357,8 @@ namespace PB_CALC
 		if (m_stack.size() >= 2)
 		{
 			double one = m_stack[0];
-			m_stack.pop_front();
 			double two = m_stack[1];
+			m_stack.pop_front();
 			m_stack.pop_front();
 			double three = one / two;
 			m_stack.push_front(three);
@@ -377,8 +377,8 @@ namespace PB_CALC
 	void CRPNCalc::exp()
 	{
 		double one = m_stack[0];
-		m_stack.pop_front();
 		double two = m_stack[1];
+		m_stack.pop_front();
 		m_stack.pop_front();
 		if (two == 0)
 		{
@@ -446,8 +446,8 @@ namespace PB_CALC
 		if (m_stack.size() >= 2)
 		{
 			int one = m_stack[0];
-			m_stack.pop_front();
 			int two = m_stack[1];
+			m_stack.pop_front();
 			m_stack.pop_front();
 			int three = one % two;
 			m_stack.push_front(three);
@@ -467,7 +467,9 @@ namespace PB_CALC
 		if (m_stack.size() >= 2)
 		{
 			double one = m_stack[0];
-			double two = m_stack[0];
+			double two = m_stack[1];
+			m_stack.pop_front();
+			m_stack.pop_front();
 			double three = one * two;
 			m_stack.push_front(three);
 		}
@@ -576,8 +578,8 @@ namespace PB_CALC
 		if (m_stack.size() >= 2)
 		{
 			double one = m_stack[0];
-			m_stack.pop_front();
 			double two = m_stack[1];
+			m_stack.pop_front();
 			m_stack.pop_front();
 			double three = one - two;
 			m_stack.push_front(three);
