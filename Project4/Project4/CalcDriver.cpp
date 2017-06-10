@@ -37,7 +37,11 @@ using namespace std;
 int main(void)
 {
 	using PB_CALC::CRPNCalc;
-	CRPNCalc myCalc;
+	CRPNCalc myCalc(false);	//Start calculator in off mode to test on/off
+	myCalc.run();			//Should fail
+	myCalc.onOff();			//Calc now on
+	myCalc.run();			//Should succeed and default to input via cin
+
 	cout << endl << "Press \"enter\" to continue";
 	cin.get();
 
