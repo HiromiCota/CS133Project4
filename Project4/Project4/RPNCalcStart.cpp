@@ -408,7 +408,7 @@ namespace PB_CALC
 	void CRPNCalc::loadProgram()
 	{
 		///potential fixes/changes
-		///SHOULD WE BE DELETING THE CONTENTS OF THE m_program LIST FIRST?
+		m_program.clear();			//clears the list<string> contents
 
 		string filename;			//string storing the user-created filename
 		string line_contents;			//string containing the contents from file (by line)
@@ -496,6 +496,25 @@ namespace PB_CALC
 	void CRPNCalc::recordProgram()
 	{
 		m_program.clear(); //clears the current program list before recording
+		string in_contents;
+		bool end_rec = false;
+
+		cout << "[P]: " << endl;
+
+		while (end_rec == false)
+		{
+			getline(cin, in_contents);
+			if (in_contents.find_first_of('P') != string::npos)
+				end_rec = true;
+
+			if (end_rec == false)
+				m_program.push_back(in_contents);
+
+			cin.clear();
+			cin.ignore(FILENAME_MAX, '\n');
+		}
+
+		cout << "[/P]" << endl;
 	}
 
 	// ----------------------------------------------------------------------------
