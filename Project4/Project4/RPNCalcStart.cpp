@@ -118,10 +118,10 @@ namespace PB_CALC
 		//Takes m_instrStream istream and calls appropriate function with correct arguments
 		double leftTerm, rightTerm;
 		string rawInput = "";
+		m_instrStream >> rawInput;		//Grab first element 
 		transform(rawInput.begin(), rawInput.end(), rawInput.begin(),
 			[](unsigned char c) { return ::toupper(c); });			//Instruction stream to upper
-		m_instrStream >> rawInput;		//Grab first element 
-
+		
 		// Valid first elements:
 		// Double
 		// Clear (C or CE)
@@ -554,7 +554,20 @@ namespace PB_CALC
 	// ----------------------------------------------------------------------------
 	void CRPNCalc::runProgram()
 	{
+		string programLine;
 
+		if (!m_program.empty())
+		{
+			for (list<string>::iterator listIt = m_program.begin();
+				listIt != m_program.end(); listIt++)
+			{
+				programLine = *listIt;
+				programLine += '\n';
+				programLine.parse();
+			}
+		}
+		else
+			m_error = true;
 	}
 
 	// ----------------------------------------------------------------------------
