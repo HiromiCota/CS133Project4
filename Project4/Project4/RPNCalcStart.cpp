@@ -141,7 +141,7 @@ namespace PB_CALC
 			else
 				clearAll();
 		}
-		else if (isLetterOperator(rawInput))
+		else if (isLetterOperator(rawInput))	//Validates D,U,H,L,F,M,P,R, or X
 		{
 			if (rawInput == "D")
 				rotateDown();
@@ -159,10 +159,10 @@ namespace PB_CALC
 				recordProgram();
 			else if (rawInput == "R")
 				runProgram();
-			else //if (rawInput == "X")
+			else //if (rawInput == "X")		
 				m_on = false;
 		}
-		else if (isRegisterGet(rawInput))	//G0-G9
+		else if (isRegisterGet(rawInput))	//Validates G0-G9
 		{
 			rawInput = stripChar(rawInput);	//Strip 'G'
 			int index = stoi(rawInput);
@@ -182,23 +182,25 @@ namespace PB_CALC
 
 		rawInput = "";
 		m_instrStream >> rawInput;
-		if (isDouble(rawInput))			//Validates with regex. 
-			rightTerm = stod(rawInput);	//This will throw if the user enters over 300 digits
-		else if (isRegisterSet(rawInput))
+		if (isDouble(rawInput))				//Validates double input
+			rightTerm = stod(rawInput);		//This will throw if the user enters over 300 digits
+		else if (isRegisterSet(rawInput))	//Validates S0-S9
 		{
 			rawInput = stripChar(rawInput);	//Strip 'S'
 			int index = stoi(rawInput);
 			m_stack.push_front(leftTerm);	//Store the first value passed in
 			setReg(index);
 		}
-		else if (isPow(rawInput))
+		else if (isPow(rawInput))			//Validates exponent operation
 		{
 			rawInput = stripChar(rawInput);
-			rightTerm = stod(rawInput);	//Already validated to be a number
+			rightTerm = stod(rawInput);		//Already validated to be a number
 			m_stack.push_front(rightTerm);	//Store exponent first
 			m_stack.push_front(leftTerm);
 			exp();
 		}
+		else if (rawInput == "")			//No second element present
+			return;
 		else
 		{
 			m_error = true;
@@ -209,10 +211,10 @@ namespace PB_CALC
 		// Binary operators (+,-,/,*,%)
 		rawInput = "";
 		m_instrStream >> rawInput;
-		if (isBinaryOperator(rawInput))
+		if (isBinaryOperator(rawInput))		//Validates binary operators
 		{
-			m_stack.push_front(leftTerm);
-			m_stack.push_front(rightTerm);
+			m_stack.push_front(rightTerm);	//Put the right term in first because it gets popped second
+			m_stack.push_front(leftTerm);			
 			if (rawInput == "+")
 				add();
 			else if (rawInput == "-")
@@ -224,8 +226,11 @@ namespace PB_CALC
 			else
 				mod();
 		}
+		else if (rawInput == "")		//No third element present.
+			return;
 		else
 		{
+			//Third element is not a binary operator
 			m_error = true;
 			throw invalid_argument("Third element must be a binary operator");
 		}
@@ -318,7 +323,7 @@ namespace PB_CALC
 	{
 		if (m_stack.size() >= 2)
 		{
-			double one = m_stack[0]; //These need to be overridden or changed to functions that pop AND return a value
+			double one = m_stack[0]; //Store before popping
 			double two = m_stack[1];
 			m_stack.pop_front();
 			m_stack.pop_front();

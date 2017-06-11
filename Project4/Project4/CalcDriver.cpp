@@ -38,7 +38,7 @@ int main(void)
 {
 	using PB_CALC::CRPNCalc;
 	CRPNCalc myCalc(false);	//Start calculator in off mode to test on/off
-	myCalc.run();			//Should fail
+	myCalc.run();			//Should immediately exit because Calc is off.
 	myCalc.onOff();			//Calc now on
 	myCalc.run();			//Should succeed and default to input via cin
 

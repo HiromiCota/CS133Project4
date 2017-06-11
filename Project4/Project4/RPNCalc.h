@@ -58,14 +58,6 @@
 //			void run();                                        
 //			void print(ostream& ostr);
 //			void input(istream& istr);
-//			bool isDouble(string rawInput);
-//			bool isPow(string rawInput);
-//			bool isClear(string rawInput);
-//			bool isLetterOperator(string rawInput);
-//			bool isRegisterGet(string rawInput);
-//			bool isRegisterSet(string rawInput);
-//			bool isBinaryOperator(string rawInput);
-//			string stripChar(string rawInput);
 //			void onOff(bool on = true) 
 //		private:
 //				
@@ -76,6 +68,13 @@
 //			void divide() -- 
 //			void exp() -- 
 //			void getReg(int reg) -- 
+//			bool isDouble(string rawInput);
+//			bool isPow(string rawInput);
+//			bool isClear(string rawInput);
+//			bool isLetterOperator(string rawInput);
+//			bool isRegisterGet(string rawInput);
+//			bool isRegisterSet(string rawInput);
+//			bool isBinaryOperator(string rawInput);
 //			void loadProgram() -- 
 //			void mod() -- 
 //			void multiply() -- 
@@ -87,6 +86,7 @@
 //			void runProgram() -- 
 //			void saveToFile() -- 
 //			void setReg(int reg) -- 
+//			string stripChar(string rawInput);
 //			void subtract() -- 
 //			void unary_prep(double& d) -- 		   
 //
@@ -116,18 +116,36 @@ namespace PB_CALC
 		CRPNCalc(bool on = true);
 		void run();                                        
 		void print(ostream& ostr);  // changes m_error on error, so not const
-		void input(istream& istr);
-		string stripChar(string rawInput) { return (rawInput.substr(1, rawInput.size() - 2)); }
+		void input(istream& istr);		
 		void onOff(bool on = true) { m_on = on; }
 
 	private:
 	// private methods
-		void add();
+		//Unary methods
 		void clearEntry();
 		void clearAll();
+		void getReg(int reg);
+		void neg();
+		void rotateUp();
+		void rotateDown();
+		void setReg(int reg);
+		
+		// Binary methods
+		void add();		
 		void divide();
 		void exp();
-		void getReg(int reg);
+		void mod();
+		void multiply();
+		void subtract();
+		
+		// I/O methods
+		void loadProgram();
+		void parse();
+		void recordProgram();
+		void runProgram();
+		void saveToFile();
+		
+		// Regex tests to identify and validate input
 		bool isDouble(string rawInput);
 		bool isPow(string rawInput);
 		bool isClear(string rawInput);
@@ -135,19 +153,10 @@ namespace PB_CALC
 		bool isRegisterGet(string rawInput);
 		bool isRegisterSet(string rawInput);
 		bool isBinaryOperator(string rawInput);
-		void loadProgram();
-		void mod();
-		void multiply();
-		void neg();
-		void parse();
-		void recordProgram();
-		void rotateUp();
-		void rotateDown();
-		void runProgram();
-		void saveToFile();
-		void setReg(int reg);
-		void subtract();		
 		
+		// Strips the first char of a string to allow easier parsing of G0-9, S0-9, and exponents
+		string stripChar(string rawInput) { return (rawInput.substr(1, rawInput.size() - 2)); }
+
 	// private properties
 		double m_registers[NUMREGS];
 		string m_buffer;
