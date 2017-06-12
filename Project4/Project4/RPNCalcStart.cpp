@@ -342,11 +342,11 @@ namespace PB_CALC
 	{
 		if (m_stack.size() >= 2)
 		{
-			double one = m_stack[0];
-			double two = m_stack[1];
+			double left = m_stack[1];
+			double right = m_stack[0];
 			m_stack.pop_front();
 			m_stack.pop_front();
-			double three = one / two;
+			double three = left / right;
 			m_stack.push_front(three);
 		}
 		else
@@ -362,22 +362,22 @@ namespace PB_CALC
 	// ----------------------------------------------------------------------------
 	void CRPNCalc::exp()
 	{
-		double one = m_stack[0];
-		double two = m_stack[1];
+		double base = m_stack[1];
+		double exponent = m_stack[0];
 		m_stack.pop_front();
 		m_stack.pop_front();
-		if (two == 0)
+		if (exponent == 0)
 		{
-			one = 1;
+			base = 1;
 		}
 		else
 		{
-			for (int i = 0; i < two; i++)
+			for (int i = 0; i < exponent; i++)
 			{
-				one *= one;
+				base *= base;
 			}
 		}
-		m_stack.push_front(one);
+		m_stack.push_front(base);
 	}
 
 	// ----------------------------------------------------------------------------
@@ -431,11 +431,11 @@ namespace PB_CALC
 	{
 		if (m_stack.size() >= 2)
 		{
-			int one = m_stack[0];
-			int two = m_stack[1];
+			int left = m_stack[1];
+			int right = m_stack[0];
 			m_stack.pop_front();
 			m_stack.pop_front();
-			int three = one % two;
+			int three = left % right;
 			m_stack.push_front(three);
 		}
 		else
@@ -601,11 +601,11 @@ namespace PB_CALC
 	{
 		if (m_stack.size() >= 2)
 		{
-			double one = m_stack[0];
-			double two = m_stack[1];
+			double left = m_stack[1];
+			double right = m_stack[0];
 			m_stack.pop_front();
 			m_stack.pop_front();
-			double three = one - two;
+			double three = left - right;
 			m_stack.push_front(three);
 		}
 		else
@@ -619,7 +619,8 @@ namespace PB_CALC
 	// ----------------------------------------------------------------------------
 	void CRPNCalc::input(istream &istr)
 	{
-
+		while (cin.peek() != '\n')
+			cin >> istr;
 	}
 
 	// ----------------------------------------------------------------------------
