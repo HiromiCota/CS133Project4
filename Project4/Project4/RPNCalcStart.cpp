@@ -235,7 +235,7 @@ namespace PB_CALC
 	// ----------------------------------------------------------------------------
 	bool CRPNCalc::isPow(string rawInput)
 	{
-		regex pow("^^([-]?)([0-9]*)$");
+		regex pow("^\\^([-]?)([0-9]*)$");
 		if (regex_match(rawInput, pow))
 			return true;
 		else
@@ -247,7 +247,7 @@ namespace PB_CALC
 	bool CRPNCalc::isClear(string rawInput)
 	{
 		//Validates C and CE
-		regex clear("^(C)[(E)?]$");
+		regex clear("^CE$|^C$");
 		if (regex_match(rawInput, clear))
 			return true;
 		else
@@ -323,8 +323,13 @@ namespace PB_CALC
 	// ----------------------------------------------------------------------------
 	void CRPNCalc::clearEntry()
 	{
-		m_stack.pop_front();
-		cout << "Top of stack cleared." << endl;
+		if (m_stack.size() > 0)
+		{
+			m_stack.pop_front();
+			cout << "Top of stack cleared." << endl;
+		}
+		else
+			cout << "Stack is already empty." << endl;
 	}
 	// ----------------------------------------------------------------------------
 	//	empties the stack
