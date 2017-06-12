@@ -367,17 +367,9 @@ namespace PB_CALC
 		m_stack.pop_front();
 		m_stack.pop_front();
 		if (exponent == 0)
-		{
-			base = 1;
-		}
+			m_stack.push_front(1);
 		else
-		{
-			for (int i = 0; i < exponent; i++)
-			{
-				base *= base;
-			}
-		}
-		m_stack.push_front(base);
+			m_stack.push_front(powf(base, exponent));			
 	}
 
 	// ----------------------------------------------------------------------------
@@ -619,8 +611,8 @@ namespace PB_CALC
 	// ----------------------------------------------------------------------------
 	void CRPNCalc::input(istream &istr)
 	{
-		while (cin.peek() != '\n')
-			cin >> istr;
+		getline(istr, m_buffer, '\n');
+		m_instrStream << m_buffer;
 	}
 
 	// ----------------------------------------------------------------------------
