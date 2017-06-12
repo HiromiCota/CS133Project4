@@ -156,7 +156,7 @@ namespace PB_CALC
 		int whatIsThis(string rawInput);
 		
 		// Strips the first char of a string to allow easier parsing of G0-9, S0-9, and exponents
-		string stripChar(string rawInput) { return (rawInput.substr(1, rawInput.size() - 2)); }
+		string stripChar(string rawInput) { return rawInput.erase(0,1); }
 
 	// private properties
 		double m_registers[NUMREGS];
