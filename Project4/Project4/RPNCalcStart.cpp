@@ -195,9 +195,11 @@ namespace PB_CALC
 			}
 		}
 	}
+	// ----------------------------------------------------------------------------
+	//	Identifies string by command type or returns -1 to signal unknown type
+	// ----------------------------------------------------------------------------
 	int CRPNCalc::whatIsThis(string rawInput)
-	{	
-	
+	{		
 		if (isDouble(rawInput))
 			return 0;
 		else if (isClear(rawInput))
@@ -215,7 +217,6 @@ namespace PB_CALC
 		else
 			return -1;
 	}	
-
 	// ----------------------------------------------------------------------------
 	//	Validates string only contains valid double elements
 	// ----------------------------------------------------------------------------
@@ -295,7 +296,6 @@ namespace PB_CALC
 		else
 			return false;
 	}
-
 	// ----------------------------------------------------------------------------
 	//	if possible, pops top 2 elements from the stack, adds them
 	//	  and pushes the result onto the stack
@@ -316,7 +316,6 @@ namespace PB_CALC
 			cout << "There are not enough items to perform an operation";
 		}
 	}
-
 	// ----------------------------------------------------------------------------
 	//	removes the top element from the stack
 	// ----------------------------------------------------------------------------
@@ -324,7 +323,6 @@ namespace PB_CALC
 	{
 		m_stack.pop_front();
 	}
-
 	// ----------------------------------------------------------------------------
 	//	empties the stack
 	// ----------------------------------------------------------------------------
@@ -333,7 +331,6 @@ namespace PB_CALC
 		while (!m_stack.empty())
 			m_stack.pop_front();
 	}
-
 	// ----------------------------------------------------------------------------
 	//	if possible, pops top 2 elements from the stack, divides them
 	//	  and pushes the result onto the stack
@@ -354,7 +351,6 @@ namespace PB_CALC
 			cout << "There are not enough items to perform an operation";
 		}
 	}
-
 	// ----------------------------------------------------------------------------
 	//	if possible, pops top 2 elements from the stack,
 	//	  raises one element to the other power
@@ -371,7 +367,6 @@ namespace PB_CALC
 		else
 			m_stack.push_front(powf(base, exponent));			
 	}
-
 	// ----------------------------------------------------------------------------
 	//	pushes the given register's value onto the stack
 	// ----------------------------------------------------------------------------
@@ -379,7 +374,6 @@ namespace PB_CALC
 	{
 		m_stack.push_front(m_registers[reg]);
 	}
-
 	// ----------------------------------------------------------------------------
 	//	retrieves the filename from the user and loads it into m_program
 	// ----------------------------------------------------------------------------
@@ -414,7 +408,6 @@ namespace PB_CALC
 
 		if_handler.close();
 	}
-
 	// ----------------------------------------------------------------------------
 	//	if possible, pops top 2 elements from the stack, mods them
 	//	  and pushes the result onto the stack
@@ -435,7 +428,6 @@ namespace PB_CALC
 			cout << "There are not enough items to perform an operation";
 		}
 	}
-
 	// ----------------------------------------------------------------------------
 	//	if possible, pops top 2 elements from the stack, multiplies them
 	//	  and pushes the result onto the stack
@@ -456,7 +448,6 @@ namespace PB_CALC
 			cout << "There are not enough items to perform an operation";
 		}
 	}
-
 	// ----------------------------------------------------------------------------
 	//	resets the top element of the stack to it's negative
 	// ----------------------------------------------------------------------------
@@ -467,7 +458,6 @@ namespace PB_CALC
 		one *= -1;
 		m_stack.push_front(one);
 	}
-
 	// ----------------------------------------------------------------------------
 	//	takes command-line input and loads it into m_program 
 	// ----------------------------------------------------------------------------
@@ -491,10 +481,8 @@ namespace PB_CALC
 			cin.clear();
 			cin.ignore(FILENAME_MAX, '\n');
 		}
-
 		cout << "[/P]" << endl;
 	}
-
 	// ----------------------------------------------------------------------------
 	//	removes the bottom of the stack and adds it to the top
 	// ----------------------------------------------------------------------------
@@ -508,7 +496,6 @@ namespace PB_CALC
 			m_stack.push_front(one);
 		}
 	}
-
 	// ----------------------------------------------------------------------------
 	//	removes the top of the stack and adds it to the bottom
 	// ----------------------------------------------------------------------------
@@ -521,7 +508,6 @@ namespace PB_CALC
 			m_stack.push_back(one);
 		}
 	}
-
 	// ----------------------------------------------------------------------------
 	//	runs the program in m_program 
 	// ----------------------------------------------------------------------------
@@ -543,7 +529,6 @@ namespace PB_CALC
 		else
 			m_error = true;
 	}
-
 	// ----------------------------------------------------------------------------
 	//	asks the user for a filename and saves m_program to that file
 	// ----------------------------------------------------------------------------
@@ -575,7 +560,6 @@ namespace PB_CALC
 
 		of_handler.close();
 	}
-
 	// ----------------------------------------------------------------------------
 	//	gets the value from the top of the stack
 	//	  and places it into the given register
@@ -584,7 +568,6 @@ namespace PB_CALC
 	{
 		m_registers[reg] = m_stack[0];
 	}
-
 	// ----------------------------------------------------------------------------
 	//	if possible, pops top 2 elements from the stack, subtracts them
 	//	  and pushes the result onto the stack
@@ -605,14 +588,13 @@ namespace PB_CALC
 			cout << "There are not enough items to perform an operation";
 		}
 	}
-
 	// ----------------------------------------------------------------------------
 	//	inputs a line from the given stream
 	// ----------------------------------------------------------------------------
 	void CRPNCalc::input(istream &istr)
 	{
 		getline(istr, m_buffer, '\n');
-		m_instrStream << m_buffer;
+		m_instrStream = istringstream(m_buffer);
 	}
 
 	// ----------------------------------------------------------------------------
@@ -623,8 +605,6 @@ namespace PB_CALC
 		calc.print(ostr);
 		return ostr;
 	}
-
-
 	// ----------------------------------------------------------------------------
 	//	istream's >> defined for CRPNCalc
 	// ----------------------------------------------------------------------------
