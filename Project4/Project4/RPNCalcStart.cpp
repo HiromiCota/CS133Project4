@@ -318,7 +318,7 @@ namespace PB_CALC
 	{
 		if (m_stack.size() >= 2)
 		{
-			double one = m_stack[0]; //These need to be overridden or changed to functions that pop AND return a value
+			double one = m_stack[0]; 
 			double two = m_stack[1];
 			m_stack.pop_front();
 			m_stack.pop_front();
