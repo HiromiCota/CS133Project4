@@ -79,6 +79,7 @@ namespace PB_CALC
 	// ----------------------------------------------------------------------------
 	void CRPNCalc::run()
 	{
+		print(cout);
 		while (m_on == true)
 		{
 			runProgram();
@@ -91,7 +92,7 @@ namespace PB_CALC
 	void CRPNCalc::print(ostream& ostr)
 	{
 		double d = 0.0;
-		ostr << "[RPN Programmable Calculator] by Paul Bladek" << endl;
+		ostr << "[RPN Programmable Calculator] by Twisted Treeline" << endl;
 		if (m_helpOn)
 			cout << helpMenu;
 		else
@@ -117,125 +118,112 @@ namespace PB_CALC
 	{
 		//Takes m_instrStream istream and calls appropriate function with correct arguments
 		double leftTerm, rightTerm;
-		string rawInput = "";
-		transform(rawInput.begin(), rawInput.end(), rawInput.begin(),
-			[](unsigned char c) { return ::toupper(c); });			//Instruction stream to upper
-		m_instrStream >> rawInput;		//Grab first element 
+		int stringContentsType = -1;
 
-		// Valid first elements:
-		// Double
-		// Clear (C or CE)
-		// Register Get (G0-G9)
-		// Rotations (D)own or (U)p
-		// (H)elp, (L)oad, save (F)ile, (M)ultiply top of stack by -1, record (P)rogram
-		// (R)un program, e(X)it program
-
-		if (isDouble(rawInput))			//Validates with regex. 
+		while (!m_instrStream.eof())
 		{
-			leftTerm = stod(rawInput);	//This will throw if the user enters over 300 digits
-		}
-		else if (isClear(rawInput))		//C or CE
-		{
-			if (rawInput == "C")
-				clearEntry();
-			else
-				clearAll();
-		}
-		else if (isLetterOperator(rawInput))
-		{
-			if (rawInput == "D")
-				rotateDown();
-			else if (rawInput == "U")
-				rotateUp();
-			else if (rawInput == "H")
-				cout << helpMenu;
-			else if (rawInput == "L")
-				loadProgram();
-			else if (rawInput == "F")
-				saveToFile();
-			else if (rawInput == "M")
-				neg();
-			else if (rawInput == "P")
-				recordProgram();
-			else if (rawInput == "R")
-				runProgram();
-			else //if (rawInput == "X")
-				m_on = false;
-		}
-		else if (isRegisterGet(rawInput))	//G0-G9
-		{
-			rawInput = stripChar(rawInput);	//Strip 'G'
-			int index = stoi(rawInput);
-			getReg(index);
-		}
-		else
-		{
-			//The first string in the stream is not valid. Set error and throw.
-			m_error = true;
-			throw invalid_argument("Program stream must start with a number or an operator.");
-		}
-
-		// Valid second elements:
-		// Double
-		// Register set (S0-S9)
-		// Unary operators (^)
-
-		rawInput = "";
-		m_instrStream >> rawInput;
-		if (isDouble(rawInput))			//Validates with regex. 
-			rightTerm = stod(rawInput);	//This will throw if the user enters over 300 digits
-		else if (isRegisterSet(rawInput))
-		{
-			rawInput = stripChar(rawInput);	//Strip 'S'
-			int index = stoi(rawInput);
-			m_stack.push_front(leftTerm);	//Store the first value passed in
-			setReg(index);
-		}
-		else if (isPow(rawInput))
-		{
-			rawInput = stripChar(rawInput);
-			rightTerm = stod(rawInput);	//Already validated to be a number
-			m_stack.push_front(rightTerm);	//Store exponent first
-			m_stack.push_front(leftTerm);
-			exp();
-		}
-		else
-		{
-			m_error = true;
-			throw invalid_argument("Missing second number or a unary operator");
-		}
-
-		// Valid third elements:
-		// Binary operators (+,-,/,*,%)
-		rawInput = "";
-		m_instrStream >> rawInput;
-		if (isBinaryOperator(rawInput))
-		{
-			m_stack.push_front(leftTerm);
-			m_stack.push_front(rightTerm);
-			if (rawInput == "+")
-				add();
-			else if (rawInput == "-")
-				subtract();
-			else if (rawInput == "/")
-				divide();
-			else if (rawInput == "*")
-				multiply();
-			else
-				mod();
-		}
-		else
-		{
-			m_error = true;
-			throw invalid_argument("Third element must be a binary operator");
+			stringContentsType = -1;
+			string rawInput = "";
+			int index = 0;
+			m_instrStream >> rawInput;									//Grab element 
+			transform(rawInput.begin(), rawInput.end(), rawInput.begin(),
+				[](unsigned char c) { return ::toupper(c); });			//Instruction stream to upper
+			stringContentsType = whatIsThis(rawInput);
+			switch (stringContentsType)
+			{
+			case 0:							//Valid double detected
+				leftTerm = stod(rawInput);	//This will throw if the user enters over 300 digits
+				m_stack.push_front(leftTerm);
+				break;
+			case 1:							//Clear command detected
+				if (rawInput == "C")
+					clearEntry();
+				else
+					clearAll();
+				break;
+			case 2:							//Binary operator detected			
+				if (rawInput == "+")
+					add();
+				else if (rawInput == "-")
+					subtract();
+				else if (rawInput == "/")
+					divide();
+				else if (rawInput == "*")
+					multiply();
+				else
+					mod();
+				break;
+			case 3:							//Letter operator detected
+				if (rawInput == "D")
+					rotateDown();
+				else if (rawInput == "U")
+					rotateUp();
+				else if (rawInput == "H")
+					cout << helpMenu;
+				else if (rawInput == "L")
+					loadProgram();
+				else if (rawInput == "F")
+					saveToFile();
+				else if (rawInput == "M")
+					neg();
+				else if (rawInput == "P")
+					recordProgram();
+				else if (rawInput == "R")
+					runProgram();
+				else //if (rawInput == "X")		
+					m_on = false;
+				break;
+			case 4:								//Exponent detected
+				rawInput = stripChar(rawInput);
+				rightTerm = stod(rawInput);		//Already validated to be a number
+				m_stack.push_front(rightTerm);	//Store exponent first				
+				exp();
+				break;
+			case 5:								//Get register command
+				rawInput = stripChar(rawInput);	//Strip 'G'
+				index = stoi(rawInput);
+				getReg(index);
+				break;
+			case 6:								//Set register command
+				rawInput = stripChar(rawInput);	//Strip 'S'
+				index = stoi(rawInput);				
+				setReg(index);
+				break;
+			default:							//String does not match anything
+				m_error = true;
+				throw invalid_argument("Not a recognized number or operation.");
+				break;
+			}
 		}
 	}
+	// ----------------------------------------------------------------------------
+	//	Identifies string by command type or returns -1 to signal unknown type
+	// ----------------------------------------------------------------------------
+	int CRPNCalc::whatIsThis(string rawInput)
+	{		
+		if (isDouble(rawInput))
+			return 0;
+		else if (isClear(rawInput))
+			return 1;
+		else if (isBinaryOperator(rawInput))
+			return 2;
+		else if (isLetterOperator(rawInput))
+			return 3;
+		else if (isPow(rawInput))
+			return 4;
+		else if (isRegisterGet(rawInput))
+			return 5;
+		else if (isRegisterSet(rawInput))
+			return 6;
+		else
+			return -1;
+	}	
 	// ----------------------------------------------------------------------------
 	//	Validates string only contains valid double elements
 	// ----------------------------------------------------------------------------
 	bool CRPNCalc::isDouble(string rawInput)
 	{
-		regex validation("^([-+]?)([0-9]*)([.]?)([0-9]*)$");
+		regex validation("^([-+]?)([0-9]+)([.]?)([0-9]*)$");
 		if (regex_match(rawInput, validation))
 			return true;
 		else
@@ -309,7 +297,6 @@ namespace PB_CALC
 		else
 			return false;
 	}
-
 	// ----------------------------------------------------------------------------
 	//	if possible, pops top 2 elements from the stack, adds them
 	//	  and pushes the result onto the stack
@@ -318,27 +305,27 @@ namespace PB_CALC
 	{
 		if (m_stack.size() >= 2)
 		{
-			double one = m_stack[0]; 
-			double two = m_stack[1];
+			double one = m_stack[1]; //Store before popping
+			double two = m_stack[0];
 			m_stack.pop_front();
 			m_stack.pop_front();
 			double three = one + two;
 			m_stack.push_front(three);
+			cout << one << " " << two << "+ =" << three << endl;
 		}
 		else
 		{
-			cout << "There are not enough items to perform an operation";
+			cout << "There are not enough items to perform an operation" << endl;
 		}
 	}
-
 	// ----------------------------------------------------------------------------
 	//	removes the top element from the stack
 	// ----------------------------------------------------------------------------
 	void CRPNCalc::clearEntry()
 	{
 		m_stack.pop_front();
+		cout << "Top of stack cleared." << endl;
 	}
-
 	// ----------------------------------------------------------------------------
 	//	empties the stack
 	// ----------------------------------------------------------------------------
@@ -346,8 +333,8 @@ namespace PB_CALC
 	{
 		while (!m_stack.empty())
 			m_stack.pop_front();
+		cout << "All items in stack cleared." << endl;
 	}
-
 	// ----------------------------------------------------------------------------
 	//	if possible, pops top 2 elements from the stack, divides them
 	//	  and pushes the result onto the stack
@@ -356,19 +343,19 @@ namespace PB_CALC
 	{
 		if (m_stack.size() >= 2)
 		{
-			double one = m_stack[0];
-			double two = m_stack[1];
+			double left = m_stack[1];
+			double right = m_stack[0];
 			m_stack.pop_front();
 			m_stack.pop_front();
-			double three = one / two;
+			double three = left / right;
 			m_stack.push_front(three);
+			cout << left << " " << right << " / =" << three;
 		}
 		else
 		{
-			cout << "There are not enough items to perform an operation";
+			cout << "There are not enough items to perform an operation" << endl;
 		}
 	}
-
 	// ----------------------------------------------------------------------------
 	//	if possible, pops top 2 elements from the stack,
 	//	  raises one element to the other power
@@ -376,32 +363,24 @@ namespace PB_CALC
 	// ----------------------------------------------------------------------------
 	void CRPNCalc::exp()
 	{
-		double one = m_stack[0];
-		double two = m_stack[1];
+		double base = m_stack[1];
+		double exponent = m_stack[0];
 		m_stack.pop_front();
 		m_stack.pop_front();
-		if (two == 0)
-		{
-			one = 1;
-		}
+		if (exponent == 0)
+			m_stack.push_front(1);
 		else
-		{
-			for (int i = 0; i < two; i++)
-			{
-				one *= one;
-			}
-		}
-		m_stack.push_front(one);
+			m_stack.push_front(powf(base, exponent));		
+		cout << base << " ^" << exponent << " =" << m_stack[0];
 	}
-
 	// ----------------------------------------------------------------------------
 	//	pushes the given register's value onto the stack
 	// ----------------------------------------------------------------------------
 	void CRPNCalc::getReg(int reg)
 	{
 		m_stack.push_front(m_registers[reg]);
+		cout << "Register " << reg << " (" << m_stack[0] << ") added to stack" << endl;
 	}
-
 	// ----------------------------------------------------------------------------
 	//	retrieves the filename from the user and loads it into m_program
 	// ----------------------------------------------------------------------------
@@ -436,7 +415,6 @@ namespace PB_CALC
 
 		if_handler.close();
 	}
-
 	// ----------------------------------------------------------------------------
 	//	if possible, pops top 2 elements from the stack, mods them
 	//	  and pushes the result onto the stack
@@ -445,19 +423,19 @@ namespace PB_CALC
 	{
 		if (m_stack.size() >= 2)
 		{
-			int one = m_stack[0];
-			int two = m_stack[1];
+			int left = m_stack[1];
+			int right = m_stack[0];
 			m_stack.pop_front();
 			m_stack.pop_front();
-			int three = one % two;
+			int three = left % right;
 			m_stack.push_front(three);
+			cout << left << " " << right << "% =" << three;
 		}
 		else
 		{
-			cout << "There are not enough items to perform an operation";
+			cout << "There are not enough items to perform an operation" << endl;
 		}
 	}
-
 	// ----------------------------------------------------------------------------
 	//	if possible, pops top 2 elements from the stack, multiplies them
 	//	  and pushes the result onto the stack
@@ -466,30 +444,29 @@ namespace PB_CALC
 	{
 		if (m_stack.size() >= 2)
 		{
-			double one = m_stack[0];
-			double two = m_stack[1];
+			double one = m_stack[1];
+			double two = m_stack[0];
 			m_stack.pop_front();
 			m_stack.pop_front();
 			double three = one * two;
 			m_stack.push_front(three);
+			cout << one << " " << two << "* =" << three;
 		}
 		else
 		{
-			cout << "There are not enough items to perform an operation";
+			cout << "There are not enough items to perform an operation" << endl;
 		}
 	}
-
 	// ----------------------------------------------------------------------------
 	//	resets the top element of the stack to it's negative
 	// ----------------------------------------------------------------------------
 	void CRPNCalc::neg()
 	{
 		double one = m_stack[0];
-		m_stack.pop_front();
-		one *= -1;
-		m_stack.push_front(one);
+		m_stack.pop_front();		;
+		m_stack.push_front(one * -1);
+		cout << one << " * -1 = " << m_stack[0] << endl;
 	}
-
 	// ----------------------------------------------------------------------------
 	//	takes command-line input and loads it into m_program 
 	// ----------------------------------------------------------------------------
@@ -513,10 +490,8 @@ namespace PB_CALC
 			cin.clear();
 			cin.ignore(FILENAME_MAX, '\n');
 		}
-
 		cout << "[/P]" << endl;
 	}
-
 	// ----------------------------------------------------------------------------
 	//	removes the bottom of the stack and adds it to the top
 	// ----------------------------------------------------------------------------
@@ -528,9 +503,9 @@ namespace PB_CALC
 			double one = m_stack[index];
 			m_stack.pop_back();
 			m_stack.push_front(one);
+			cout << "Stack rotated down" << endl;
 		}
 	}
-
 	// ----------------------------------------------------------------------------
 	//	removes the top of the stack and adds it to the bottom
 	// ----------------------------------------------------------------------------
@@ -541,17 +516,30 @@ namespace PB_CALC
 			double one = m_stack[0];
 			m_stack.pop_front();
 			m_stack.push_back(one);
+			cout << "Stack rotated up" << endl;
 		}
 	}
-
 	// ----------------------------------------------------------------------------
 	//	runs the program in m_program 
 	// ----------------------------------------------------------------------------
 	void CRPNCalc::runProgram()
 	{
+		string programLine;
 
+		if (!m_program.empty())
+		{
+			for (list<string>::iterator listIt = m_program.begin();
+				listIt != m_program.end(); listIt++)
+			{
+				programLine = *listIt;
+				programLine += '\n';
+				m_instrStream = istringstream(programLine);
+				parse();
+			}
+		}
+		else
+			input(cin);			
 	}
-
 	// ----------------------------------------------------------------------------
 	//	asks the user for a filename and saves m_program to that file
 	// ----------------------------------------------------------------------------
@@ -583,7 +571,6 @@ namespace PB_CALC
 
 		of_handler.close();
 	}
-
 	// ----------------------------------------------------------------------------
 	//	gets the value from the top of the stack
 	//	  and places it into the given register
@@ -591,8 +578,8 @@ namespace PB_CALC
 	void CRPNCalc::setReg(int reg)
 	{
 		m_registers[reg] = m_stack[0];
+		cout << "Register " << reg << " set to: " << m_stack[0] << endl;
 	}
-
 	// ----------------------------------------------------------------------------
 	//	if possible, pops top 2 elements from the stack, subtracts them
 	//	  and pushes the result onto the stack
@@ -601,25 +588,27 @@ namespace PB_CALC
 	{
 		if (m_stack.size() >= 2)
 		{
-			double one = m_stack[0];
-			double two = m_stack[1];
+			double left = m_stack[1];
+			double right = m_stack[0];
 			m_stack.pop_front();
 			m_stack.pop_front();
-			double three = one - two;
+			double three = left - right;
 			m_stack.push_front(three);
+			cout << left << " " << right << "- =" << three << endl;
 		}
 		else
 		{
 			cout << "There are not enough items to perform an operation";
 		}
 	}
-
 	// ----------------------------------------------------------------------------
 	//	inputs a line from the given stream
 	// ----------------------------------------------------------------------------
 	void CRPNCalc::input(istream &istr)
 	{
-
+		getline(istr, m_buffer, '\n');
+		m_instrStream = istringstream(m_buffer);
+		parse();
 	}
 
 	// ----------------------------------------------------------------------------
@@ -630,8 +619,6 @@ namespace PB_CALC
 		calc.print(ostr);
 		return ostr;
 	}
-
-
 	// ----------------------------------------------------------------------------
 	//	istream's >> defined for CRPNCalc
 	// ----------------------------------------------------------------------------
