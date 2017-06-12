@@ -153,6 +153,7 @@ namespace PB_CALC
 		bool isRegisterGet(string rawInput);
 		bool isRegisterSet(string rawInput);
 		bool isBinaryOperator(string rawInput);
+		int whatIsThis(string rawInput);
 		
 		// Strips the first char of a string to allow easier parsing of G0-9, S0-9, and exponents
 		string stripChar(string rawInput) { return (rawInput.substr(1, rawInput.size() - 2)); }

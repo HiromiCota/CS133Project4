@@ -117,124 +117,105 @@ namespace PB_CALC
 	{
 		//Takes m_instrStream istream and calls appropriate function with correct arguments
 		double leftTerm, rightTerm;
-		string rawInput = "";
-		m_instrStream >> rawInput;		//Grab first element 
-		transform(rawInput.begin(), rawInput.end(), rawInput.begin(),
-			[](unsigned char c) { return ::toupper(c); });			//Instruction stream to upper
-		
-		// Valid first elements:
-		// Double
-		// Clear (C or CE)
-		// Register Get (G0-G9)
-		// Rotations (D)own or (U)p
-		// (H)elp, (L)oad, save (F)ile, (M)ultiply top of stack by -1, record (P)rogram
-		// (R)un program, e(X)it program
+		int stringContentsType = -1;
 
-		if (isDouble(rawInput))			//Validates with regex. 
+		while (!m_instrStream.eof())
 		{
-			leftTerm = stod(rawInput);	//This will throw if the user enters over 300 digits
-		}
-		else if (isClear(rawInput))		//C or CE
-		{
-			if (rawInput == "C")
-				clearEntry();
-			else
-				clearAll();
-		}
-		else if (isLetterOperator(rawInput))	//Validates D,U,H,L,F,M,P,R, or X
-		{
-			if (rawInput == "D")
-				rotateDown();
-			else if (rawInput == "U")
-				rotateUp();
-			else if (rawInput == "H")
-				cout << helpMenu;
-			else if (rawInput == "L")
-				loadProgram();
-			else if (rawInput == "F")
-				saveToFile();
-			else if (rawInput == "M")
-				neg();
-			else if (rawInput == "P")
-				recordProgram();
-			else if (rawInput == "R")
-				runProgram();
-			else //if (rawInput == "X")		
-				m_on = false;
-		}
-		else if (isRegisterGet(rawInput))	//Validates G0-G9
-		{
-			rawInput = stripChar(rawInput);	//Strip 'G'
-			int index = stoi(rawInput);
-			getReg(index);
-		}
-		else
-		{
-			//The first string in the stream is not valid. Set error and throw.
-			m_error = true;
-			throw invalid_argument("Program stream must start with a number or an operator.");
-		}
-
-		// Valid second elements:
-		// Double
-		// Register set (S0-S9)
-		// Unary operators (^)
-
-		rawInput = "";
-		m_instrStream >> rawInput;
-		if (isDouble(rawInput))				//Validates double input
-			rightTerm = stod(rawInput);		//This will throw if the user enters over 300 digits
-		else if (isRegisterSet(rawInput))	//Validates S0-S9
-		{
-			rawInput = stripChar(rawInput);	//Strip 'S'
-			int index = stoi(rawInput);
-			m_stack.push_front(leftTerm);	//Store the first value passed in
-			setReg(index);
-		}
-		else if (isPow(rawInput))			//Validates exponent operation
-		{
-			rawInput = stripChar(rawInput);
-			rightTerm = stod(rawInput);		//Already validated to be a number
-			m_stack.push_front(rightTerm);	//Store exponent first
-			m_stack.push_front(leftTerm);
-			exp();
-		}
-		else if (rawInput == "")			//No second element present
-			return;
-		else
-		{
-			m_error = true;
-			throw invalid_argument("Missing second number or a unary operator");
-		}
-
-		// Valid third elements:
-		// Binary operators (+,-,/,*,%)
-		rawInput = "";
-		m_instrStream >> rawInput;
-		if (isBinaryOperator(rawInput))		//Validates binary operators
-		{
-			m_stack.push_front(rightTerm);	//Put the right term in first because it gets popped second
-			m_stack.push_front(leftTerm);			
-			if (rawInput == "+")
-				add();
-			else if (rawInput == "-")
-				subtract();
-			else if (rawInput == "/")
-				divide();
-			else if (rawInput == "*")
-				multiply();
-			else
-				mod();
-		}
-		else if (rawInput == "")		//No third element present.
-			return;
-		else
-		{
-			//Third element is not a binary operator
-			m_error = true;
-			throw invalid_argument("Third element must be a binary operator");
+			stringContentsType = -1;
+			string rawInput = "";
+			int index = 0;
+			m_instrStream >> rawInput;									//Grab element 
+			transform(rawInput.begin(), rawInput.end(), rawInput.begin(),
+				[](unsigned char c) { return ::toupper(c); });			//Instruction stream to upper
+			stringContentsType = whatIsThis(rawInput);
+			switch (stringContentsType)
+			{
+			case 0:							//Valid double detected
+				leftTerm = stod(rawInput);	//This will throw if the user enters over 300 digits
+				m_stack.push_front(leftTerm);
+				break;
+			case 1:							//Clear command detected
+				if (rawInput == "C")
+					clearEntry();
+				else
+					clearAll();
+				break;
+			case 2:							//Binary operator detected			
+				if (rawInput == "+")
+					add();
+				else if (rawInput == "-")
+					subtract();
+				else if (rawInput == "/")
+					divide();
+				else if (rawInput == "*")
+					multiply();
+				else
+					mod();
+				break;
+			case 3:							//Letter operator detected
+				if (rawInput == "D")
+					rotateDown();
+				else if (rawInput == "U")
+					rotateUp();
+				else if (rawInput == "H")
+					cout << helpMenu;
+				else if (rawInput == "L")
+					loadProgram();
+				else if (rawInput == "F")
+					saveToFile();
+				else if (rawInput == "M")
+					neg();
+				else if (rawInput == "P")
+					recordProgram();
+				else if (rawInput == "R")
+					runProgram();
+				else //if (rawInput == "X")		
+					m_on = false;
+				break;
+			case 4:								//Exponent detected
+				rawInput = stripChar(rawInput);
+				rightTerm = stod(rawInput);		//Already validated to be a number
+				m_stack.push_front(rightTerm);	//Store exponent first				
+				exp();
+				break;
+			case 5:								//Get register command
+				rawInput = stripChar(rawInput);	//Strip 'G'
+				index = stoi(rawInput);
+				getReg(index);
+				break;
+			case 6:								//Set register command
+				rawInput = stripChar(rawInput);	//Strip 'S'
+				index = stoi(rawInput);				
+				setReg(index);
+				break;
+			default:							//String does not match anything
+				m_error = true;
+				throw invalid_argument("Not a recognized number or operation.");
+				break;
+			}
 		}
 	}
+	int CRPNCalc::whatIsThis(string rawInput)
+	{	
+	
+		if (isDouble(rawInput))
+			return 0;
+		else if (isClear(rawInput))
+			return 1;
+		else if (isBinaryOperator(rawInput))
+			return 2;
+		else if (isLetterOperator(rawInput))
+			return 3;
+		else if (isPow(rawInput))
+			return 4;
+		else if (isRegisterGet(rawInput))
+			return 5;
+		else if (isRegisterSet(rawInput))
+			return 6;
+		else
+			return -1;
+	}	
+
 	// ----------------------------------------------------------------------------
 	//	Validates string only contains valid double elements
 	// ----------------------------------------------------------------------------
