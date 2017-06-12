@@ -82,7 +82,7 @@ namespace PB_CALC
 		print(cout);
 		while (m_on == true)
 		{
-			runProgram();
+			input(cin);			
 		}
 	}
 
@@ -126,6 +126,8 @@ namespace PB_CALC
 			stringContentsType = -1;
 			rawInput = "";
 			index = 0;
+			leftTerm = 0;
+			rightTerm = 0;
 			m_instrStream >> rawInput;									//Grab element 
 			transform(rawInput.begin(), rawInput.end(), rawInput.begin(),
 				[](unsigned char c) { return ::toupper(c); });			//Instruction stream to upper
@@ -190,6 +192,8 @@ namespace PB_CALC
 				index = stoi(rawInput);				
 				setReg(index);
 				break;
+			case 7:
+				break;							//Empty string. Probably whitespace
 			default:							//String does not match anything
 				m_error = true;
 				throw invalid_argument("Not a recognized number or operation.");
@@ -202,7 +206,9 @@ namespace PB_CALC
 	// ----------------------------------------------------------------------------
 	int CRPNCalc::whatIsThis(string rawInput)
 	{		
-		if (isDouble(rawInput))
+		if (rawInput == "")
+			return 7;
+		else if (isDouble(rawInput))
 			return 0;
 		else if (isClear(rawInput))
 			return 1;
@@ -496,9 +502,11 @@ namespace PB_CALC
 				m_program.push_back(in_contents);
 
 			cin.clear();
-			//cin.ignore(FILENAME_MAX, '\n');
+			
 		}
+		//cin.ignore(FILENAME_MAX, '\n');
 		cout << "[/P]" << endl;
+		
 	}
 	// ----------------------------------------------------------------------------
 	//	removes the bottom of the stack and adds it to the top
@@ -536,14 +544,16 @@ namespace PB_CALC
 
 		if (!m_program.empty())
 		{
+			cout << "Starting program" << endl;
 			for (list<string>::iterator listIt = m_program.begin();
-				listIt != m_program.end(); listIt++)
+				listIt != m_program.end(); ++listIt)
 			{
 				programLine = *listIt;
 				programLine += '\n';
 				m_instrStream = istringstream(programLine);
 				parse();
 			}
+			cout << "End of program" << endl;
 		}
 		else
 			input(cin);			
