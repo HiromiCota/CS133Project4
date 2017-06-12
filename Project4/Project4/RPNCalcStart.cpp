@@ -119,12 +119,13 @@ namespace PB_CALC
 		//Takes m_instrStream istream and calls appropriate function with correct arguments
 		double leftTerm, rightTerm;
 		int stringContentsType = -1;
-
+		string rawInput = "";
+		int index = 0;
 		while (!m_instrStream.eof())
 		{
 			stringContentsType = -1;
-			string rawInput = "";
-			int index = 0;
+			rawInput = "";
+			index = 0;
 			m_instrStream >> rawInput;									//Grab element 
 			transform(rawInput.begin(), rawInput.end(), rawInput.begin(),
 				[](unsigned char c) { return ::toupper(c); });			//Instruction stream to upper
@@ -269,7 +270,7 @@ namespace PB_CALC
 	// ----------------------------------------------------------------------------
 	bool CRPNCalc::isRegisterGet(string rawInput)
 	{
-		regex regGet("^(G)([0-9])$");	//Validates G0-G9 and S0-S9
+		regex regGet("^(G)([0-9]){1}$");	//Validates G0-G9 and S0-S9
 		if (regex_match(rawInput, regGet))
 			return true;
 		else
@@ -280,7 +281,7 @@ namespace PB_CALC
 	// ----------------------------------------------------------------------------
 	bool CRPNCalc::isRegisterSet(string rawInput)
 	{
-		regex regSet("^(S)([0-9])$");	//Validates G0-G9 and S0-S9
+		regex regSet("^(S)([0-9]){1}$");	//Validates G0-G9 and S0-S9
 		if (regex_match(rawInput, regSet))
 			return true;
 		else
@@ -486,6 +487,8 @@ namespace PB_CALC
 		while (end_rec == false)
 		{
 			getline(cin, in_contents);
+			transform(in_contents.begin(), in_contents.end(), in_contents.begin(),
+				[](unsigned char c) { return ::toupper(c); });
 			if (in_contents.find_first_of('P') != string::npos)
 				end_rec = true;
 
@@ -493,7 +496,7 @@ namespace PB_CALC
 				m_program.push_back(in_contents);
 
 			cin.clear();
-			cin.ignore(FILENAME_MAX, '\n');
+			//cin.ignore(FILENAME_MAX, '\n');
 		}
 		cout << "[/P]" << endl;
 	}
