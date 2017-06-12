@@ -544,7 +544,8 @@ namespace PB_CALC
 			{
 				programLine = *listIt;
 				programLine += '\n';
-				programLine.parse();
+				m_instrStream = istringstream(programLine);
+				parse();
 			}
 		}
 		else
