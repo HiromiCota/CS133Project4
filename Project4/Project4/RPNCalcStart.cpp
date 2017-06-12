@@ -79,6 +79,7 @@ namespace PB_CALC
 	// ----------------------------------------------------------------------------
 	void CRPNCalc::run()
 	{
+		print(cout);
 		while (m_on == true)
 		{
 			runProgram();
@@ -91,7 +92,7 @@ namespace PB_CALC
 	void CRPNCalc::print(ostream& ostr)
 	{
 		double d = 0.0;
-		ostr << "[RPN Programmable Calculator] by Paul Bladek" << endl;
+		ostr << "[RPN Programmable Calculator] by Twisted Treeline" << endl;
 		if (m_helpOn)
 			cout << helpMenu;
 		else
@@ -222,7 +223,7 @@ namespace PB_CALC
 	// ----------------------------------------------------------------------------
 	bool CRPNCalc::isDouble(string rawInput)
 	{
-		regex validation("^([-+]?)([0-9]*)([.]?)([0-9]*)$");
+		regex validation("^([-+]?)([0-9]+)([.]?)([0-9]*)$");
 		if (regex_match(rawInput, validation))
 			return true;
 		else
@@ -304,16 +305,17 @@ namespace PB_CALC
 	{
 		if (m_stack.size() >= 2)
 		{
-			double one = m_stack[0]; //Store before popping
-			double two = m_stack[1];
+			double one = m_stack[1]; //Store before popping
+			double two = m_stack[0];
 			m_stack.pop_front();
 			m_stack.pop_front();
 			double three = one + two;
 			m_stack.push_front(three);
+			cout << one << " " << two << "+ =" << three << endl;
 		}
 		else
 		{
-			cout << "There are not enough items to perform an operation";
+			cout << "There are not enough items to perform an operation" << endl;
 		}
 	}
 	// ----------------------------------------------------------------------------
@@ -322,6 +324,7 @@ namespace PB_CALC
 	void CRPNCalc::clearEntry()
 	{
 		m_stack.pop_front();
+		cout << "Top of stack cleared." << endl;
 	}
 	// ----------------------------------------------------------------------------
 	//	empties the stack
@@ -330,6 +333,7 @@ namespace PB_CALC
 	{
 		while (!m_stack.empty())
 			m_stack.pop_front();
+		cout << "All items in stack cleared." << endl;
 	}
 	// ----------------------------------------------------------------------------
 	//	if possible, pops top 2 elements from the stack, divides them
@@ -345,10 +349,11 @@ namespace PB_CALC
 			m_stack.pop_front();
 			double three = left / right;
 			m_stack.push_front(three);
+			cout << left << " " << right << " / =" << three;
 		}
 		else
 		{
-			cout << "There are not enough items to perform an operation";
+			cout << "There are not enough items to perform an operation" << endl;
 		}
 	}
 	// ----------------------------------------------------------------------------
@@ -365,7 +370,8 @@ namespace PB_CALC
 		if (exponent == 0)
 			m_stack.push_front(1);
 		else
-			m_stack.push_front(powf(base, exponent));			
+			m_stack.push_front(powf(base, exponent));		
+		cout << base << " ^" << exponent << " =" << m_stack[0];
 	}
 	// ----------------------------------------------------------------------------
 	//	pushes the given register's value onto the stack
@@ -373,6 +379,7 @@ namespace PB_CALC
 	void CRPNCalc::getReg(int reg)
 	{
 		m_stack.push_front(m_registers[reg]);
+		cout << "Register " << reg << " (" << m_stack[0] << ") added to stack" << endl;
 	}
 	// ----------------------------------------------------------------------------
 	//	retrieves the filename from the user and loads it into m_program
@@ -422,10 +429,11 @@ namespace PB_CALC
 			m_stack.pop_front();
 			int three = left % right;
 			m_stack.push_front(three);
+			cout << left << " " << right << "% =" << three;
 		}
 		else
 		{
-			cout << "There are not enough items to perform an operation";
+			cout << "There are not enough items to perform an operation" << endl;
 		}
 	}
 	// ----------------------------------------------------------------------------
@@ -436,16 +444,17 @@ namespace PB_CALC
 	{
 		if (m_stack.size() >= 2)
 		{
-			double one = m_stack[0];
-			double two = m_stack[1];
+			double one = m_stack[1];
+			double two = m_stack[0];
 			m_stack.pop_front();
 			m_stack.pop_front();
 			double three = one * two;
 			m_stack.push_front(three);
+			cout << one << " " << two << "* =" << three;
 		}
 		else
 		{
-			cout << "There are not enough items to perform an operation";
+			cout << "There are not enough items to perform an operation" << endl;
 		}
 	}
 	// ----------------------------------------------------------------------------
@@ -454,9 +463,9 @@ namespace PB_CALC
 	void CRPNCalc::neg()
 	{
 		double one = m_stack[0];
-		m_stack.pop_front();
-		one *= -1;
-		m_stack.push_front(one);
+		m_stack.pop_front();		;
+		m_stack.push_front(one * -1);
+		cout << one << " * -1 = " << m_stack[0] << endl;
 	}
 	// ----------------------------------------------------------------------------
 	//	takes command-line input and loads it into m_program 
@@ -494,6 +503,7 @@ namespace PB_CALC
 			double one = m_stack[index];
 			m_stack.pop_back();
 			m_stack.push_front(one);
+			cout << "Stack rotated down" << endl;
 		}
 	}
 	// ----------------------------------------------------------------------------
@@ -506,6 +516,7 @@ namespace PB_CALC
 			double one = m_stack[0];
 			m_stack.pop_front();
 			m_stack.push_back(one);
+			cout << "Stack rotated up" << endl;
 		}
 	}
 	// ----------------------------------------------------------------------------
@@ -527,7 +538,7 @@ namespace PB_CALC
 			}
 		}
 		else
-			m_error = true;
+			input(cin);			
 	}
 	// ----------------------------------------------------------------------------
 	//	asks the user for a filename and saves m_program to that file
@@ -567,6 +578,7 @@ namespace PB_CALC
 	void CRPNCalc::setReg(int reg)
 	{
 		m_registers[reg] = m_stack[0];
+		cout << "Register " << reg << " set to: " << m_stack[0] << endl;
 	}
 	// ----------------------------------------------------------------------------
 	//	if possible, pops top 2 elements from the stack, subtracts them
@@ -582,6 +594,7 @@ namespace PB_CALC
 			m_stack.pop_front();
 			double three = left - right;
 			m_stack.push_front(three);
+			cout << left << " " << right << "- =" << three << endl;
 		}
 		else
 		{
@@ -595,6 +608,7 @@ namespace PB_CALC
 	{
 		getline(istr, m_buffer, '\n');
 		m_instrStream = istringstream(m_buffer);
+		parse();
 	}
 
 	// ----------------------------------------------------------------------------
