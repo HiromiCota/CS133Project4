@@ -1,40 +1,12 @@
-Once your calculator is working, use it to write, run and save an RPN program which goes through the numbers in registers 0 - 6, puts the sum in register 7, the mean (average) in register 8, and the standard deviation in register 9.
-
-Standard deviation is defined as the square root of the variance of a set of data, where  the variance is:
-          (sum_of_the_squares -  (sum2 / number_of_elements)) / ( number_of_elements - 1)
- (as a quick test, if the data are [5 | 7 | 3 | 6 | 6 | 2 | 5], the standard deviation should be 1.772810520855837).
-Include this saved program file with your project.
-
-5 S0
-7 S1
-3 S2
-6 S3
-6 S4
-2 S5
-5 S6
-G0
-G1 +
-G2 +
-G3 +
-G4 +
-G5 +
-G6 +
-S7
-G7
-7 /
-S8
+5 S0 7 S1 3 S2 6 S3 6 S4 2 S5 5 S6
++ + + + + + S7
+7 / S8
 CE
-G0 ^2
-G1 ^2
-G2 ^2
-G3 ^2
-G4 ^2
-G5 ^2
-G6 ^2
-+
-+
-+
-+
-+
-+
+G0 ^2 G1 ^2 G2 ^2 G3 ^2 G4 ^2 G5 ^2 G6 ^2
++ + + + + +
+G7 ^2
+7 /
+-
+6 /
+^0.5
 

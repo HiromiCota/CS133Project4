@@ -238,11 +238,11 @@ namespace PB_CALC
 	}
 	// ----------------------------------------------------------------------------
 	//	Validates string only contains ^ and a valid int
-	//  Int can be negative
+	//  Int can be negative or decimal
 	// ----------------------------------------------------------------------------
 	bool CRPNCalc::isPow(string rawInput)
 	{
-		regex pow("^\\^([-]?)([0-9]*)$");
+		regex pow("^\\^([-]?)([0-9]+)([.]?)([0-9]*)$");
 		if (regex_match(rawInput, pow))
 			return true;
 		else
@@ -361,7 +361,7 @@ namespace PB_CALC
 			m_stack.pop_front();
 			double three = left / right;
 			m_stack.push_front(three);
-			cout << left << " " << right << " / =" << three;
+			cout << left << " " << right << " / =" << three << endl;
 		}
 		else
 		{
@@ -383,7 +383,7 @@ namespace PB_CALC
 			m_stack.push_front(1);
 		else
 			m_stack.push_front(powf(base, exponent));		
-		cout << base << " ^" << exponent << " =" << m_stack[0];
+		cout << base << " ^" << exponent << " =" << m_stack[0] << endl;
 	}
 	// ----------------------------------------------------------------------------
 	//	pushes the given register's value onto the stack
