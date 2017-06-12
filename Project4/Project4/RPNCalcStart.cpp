@@ -426,6 +426,7 @@ namespace PB_CALC
 
 
 		if_handler.close();
+		cout << filename << " loaded." << endl;
 	}
 	// ----------------------------------------------------------------------------
 	//	if possible, pops top 2 elements from the stack, mods them
@@ -588,6 +589,7 @@ namespace PB_CALC
 
 
 		of_handler.close();
+		cout << filename << " saved." << endl;
 	}
 	// ----------------------------------------------------------------------------
 	//	gets the value from the top of the stack
